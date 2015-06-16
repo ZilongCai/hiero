@@ -42,7 +42,6 @@ Rule::Rule(const string& ruleLine, const vector<double>& douVec_weights)
 
 }
 
-Rule::Rule(string& str_srcRhs, string& str_trgRhs, vector<double>& douVec_feats, vector<double> douVec_weights)
 {
 	this->strVec_srcRhs_ = strVec_srcRhs;
 	this->strVec_trgRhs_ = strVec_trgRhs;
