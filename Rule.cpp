@@ -2,7 +2,7 @@
 #include"Rule.h"
 #include"Util.h"
 
-Rule::Rule(string& ruleLine, vector<double> douVec_weights)
+Rule::Rule(const string& ruleLine, const vector<double>& douVec_weights)
 {
 	string str_delim(" ||| ");
 	
@@ -32,7 +32,7 @@ Rule::Rule(string& ruleLine, vector<double> douVec_weights)
 	}
 	else
 	{
-		double dou_tmp;
+		double dou_tmp = 0;
 		for(int i = 0; i  < douVec_weights.size(); i++)
 		{
 			dou_tmp += douVec_weights[i] * this->douVec_feats_[i];
@@ -40,25 +40,21 @@ Rule::Rule(string& ruleLine, vector<double> douVec_weights)
 		this->dou_score_ = dou_tmp;
 	}
 
-	//this->i_global_rule_ID_ = i_rule_id;
 }
 
 Rule::Rule(string& str_srcRhs, string& str_trgRhs, vector<double>& douVec_feats, vector<double> douVec_weights)
 {
-	string str_item_src = Util::trim(str_srcRhs);
-	this->strVec_srcRhs_ = Util::split(str_item_src);
+	this->strVec_srcRhs_ = strVec_srcRhs;
+	this->strVec_trgRhs_ = strVec_trgRhs;
 
-
-	string str_item_trg = Util::trim(str_trgRhs);
-	this->strVec_trgRhs_ = Util::split(str_item_trg);
-
-	if(douVec_weights.size() != this->douVec_feats_.size())
+	this-> douVec_feats_ =  douVec_feats;
+	if(douVec_weights.size() != douVec_feats.size())
 	{
                 PRINT_ERR("the number of  rule features is not equral to weights \n Check error in Rule.cpp\n");
         }
 	else
 	{
-		double dou_tmp;
+		double dou_tmp = 0;
                 for(int i = 0; i  < douVec_weights.size(); i++)
                 {
                         dou_tmp += douVec_weights[i] * this->douVec_feats_[i];
@@ -66,7 +62,7 @@ Rule::Rule(string& str_srcRhs, string& str_trgRhs, vector<double>& douVec_feats,
                 this->dou_score_ = dou_tmp;
 	}	
 
-	//this->i_global_rule_ID_ = i_rule_id;
+	
 }
 
 Rule::~Rule()
@@ -86,4 +82,6 @@ string Rule::SrcTrg2String()
         {
                 ret = ret + *ite + " ";
         }
+	
+	return ret;
 }

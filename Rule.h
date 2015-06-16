@@ -9,6 +9,7 @@ using namespace std;
  * @beief:
  * The operator overloading and the private member dou_score_ are used for rule pruning. 
  * Implementation of rule pruning is at class RuleTable. 
+ * Rule ID is rule's index in rule table.
  *
  * @date: 2015-6-9
  */
@@ -18,10 +19,10 @@ class Rule
 {
 public:
 	/* for the general rules*/
-	Rule(string& ruleLine, vector<double> douVec_weights);	
+	Rule(const string& ruleLine, const vector<double>& douVec_weights);	
 
-	/* for the gule rules*/
-	Rule(string& str_srcRhs, string& str_trgRhs, vector<double>& douVec_feats, vector<double> douVec_weights);
+	/* for the gule rules and OOV rules*/
+	Rule(const vector<string>& strVec_srcRhs, const vector<string>& strVec_trgRhs, const vector<double>& douVec_feats, const vector<double>& douVec_weights);
 
 	~Rule(void);
 
@@ -58,11 +59,6 @@ private:
 	vector<double> douVec_feats_;  
 	double dou_score_;
 	int i_type_;
-	
-	/*
- 	  -1 for glue rules, -2 for OOV rules.
- 	*/
-	//int i_global_rule_ID;
 };
 
 #endif

@@ -25,7 +25,7 @@ public:
 	RuleTable(void);
 	~RuleTable(void);
 	
-	void Load(const string file_name, vector<double>& douVec_weights, int i_rule_limit, double dou_rule_threshold);
+	void Load(const string& file_name, const vector<double>& douVec_weights, const int& i_rule_limit, const double& dou_rule_threshold);
 	
 	string ExtractSrcFromTableItem (const string line) const;
 	
@@ -38,9 +38,29 @@ public:
  	 */
 	void UpdateRuleTable(const string& str_src, vector<Rule>& vec_rule);
 
-	//void GenerateRule4OOV(); 
+	/**
+ 	*  @brief: Use oov word to generate rule. the source and target string are the oov word.
+ 	*  @param[in] str: oov word
+ 	*  @param[in] i_feat_number: number of rule features
+ 	*  @return: oov rule
+ 	*/ 
 
+	Rule GenerateRule4OOV(const string& str, const int& i_feat_number); 
+	
 	Rule GetRule(const int& i_rule_ID) const;
+
+	/**
+ 	*  @brief: Using string to search appropriate rules from rule table. 
+ 	*  @param[in] str_src: source string to search
+ 	*  @param[in] vec_match_ruleID: the index of matched rules.
+ 	*  @param[out]: true-> has find appropriate rules   false-> find nothing
+ 	**/	 
+	bool MatchRule(const string& str_src, vector<int>& vec_match_ruleID);
+	
+	size_t GetRuleTableSize()
+	{
+		return this->vec_rule_table_.size();
+	}
 
 private:
 	vector<Rule> vec_rule_table_;

@@ -46,8 +46,6 @@ Rule RuleTable::GetRule(const int& i_rule_ID) const
 
 
 
-
-
 void RuleTable::UpdateRuleTable(const string& str_src, vector<Rule>& vec_rule)
 {
 	/* for debug  2015-6-9
@@ -75,6 +73,10 @@ void RuleTable::UpdateRuleTable(const string& str_src, vector<Rule>& vec_rule)
 			vec_ruleID_tmp[i] = i_rule_ID + i;
 			i_count++;
 		}
+		else
+		{	
+			break;
+		}
 	}
 	
 	vec_ruleID_tmp.resize(i_count); //remove -1 
@@ -87,7 +89,7 @@ void RuleTable::UpdateRuleTable(const string& str_src, vector<Rule>& vec_rule)
 
 }
 
-void RuleTable::Load(const string file_name, vector<double>& douVec_weights, int i_rule_limit, double dou_rule_threshold)
+void RuleTable::Load(const string& file_name, const vector<double>& douVec_weights, const int& i_rule_limit, const double& dou_rule_threshold)
 {
 	PRINT("Loading rule table [" << file_name << "]...\n");
 	this->i_rule_limit_ = i_rule_limit;
@@ -107,7 +109,6 @@ void RuleTable::Load(const string file_name, vector<double>& douVec_weights, int
 
 	while(getline(fin,line))
 	{
-		//PRINT(line);
 		str_current_src = ExtractSrcFromTableItem(line);
 		Rule r = Rule(line, douVec_weights);
 
@@ -141,11 +142,51 @@ void RuleTable::Load(const string file_name, vector<double>& douVec_weights, int
 	
 	fin.close();
 
-	/* for glue rules */
+	/* for glue rules 
+ 	 * glue rule ID is vec_rule_table_.size()-1.
+ 	 */
+	vector<string> strVec_glue_srcRhs;
+	vector<string> strVec_glue_trgRhs;
+	strVec_glue_srcRhs.push_back(X1); strVec_glue_srcRhs.push_back(X2);
+	strVec_glue_trgRhs.push_back(X1); strVec_glue_trgRhs.push_back(X2);
+	vector<double> douVec_feats(douVec_weights.size(), 0);
+	Rule r = Rule(strVec_glue_srcRhs, strVec_glue_trgRhs, douVec_feats, douVec_weights);
+	this->vec_rule_table_.push_back(r);
 	
 
 	finish = clock(); 
 	double dou_duration = (finish - start)/CLOCKS_PER_SEC;
 	PRINT("Loading rule table is done \n time is [" << dou_duration << "] secods\n"
 	        << "loaded rules size is [" << (int)this->vec_rule_table_.size() << "]\n");
+}
+
+
+bool RuleTable::MatchRule(const string& str_src, vector<int>& vec_match_ruleID)
+{
+	map<string, vector<int> >::iterator ite = this->map_ruleID_.find(str_src);
+	
+	if(ite != this->map_ruleID_.end())
+	{
+		vec_match_ruleID = ite->second;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+Rule  RuleTable::GenerateRule4OOV(const string& str, const int& i_feat_number)
+{
+	vector<string> strVec_strRhs(1, str);
+	vector<string> strVec_trgRhs(1, str);
+	
+	PRINT("OOV feature number is " << i_feat_number << endl);
+	vector<double> douVec_feats(i_feat_number, -10);
+	vector<double> douVec_weights(i_feat_number, -10);
+
+	Rule r = Rule(strVec_strRhs, strVec_trgRhs, douVec_feats, douVec_weights);
+	
+	return r;
+	
 }
