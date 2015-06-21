@@ -12,7 +12,7 @@ using namespace std;
 
 
 /**
- * @brief: Cell unit. This cell is used for stote hypothesises in sort.
+ * @brief: Cell unit. This cell is used for store hypothesises in sort.
  *
  */
 
