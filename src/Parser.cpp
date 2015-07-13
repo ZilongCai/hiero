@@ -6,7 +6,9 @@
 
 Parser::Parser(const string& str_sentence)
 {
-	this->strVec_src_ = Util::split(str_sentence);
+	//add head and tail for the input sentence
+	string str  = "<s> " + str_sentence + " </s>";   
+	this->strVec_src_ = Util::split(str);
 	this->p_chart_ = new Chart();	
 	this->douVec_weights_ = DataSingleton::GetInstance()->p_parameter->GetWeights();
 		
@@ -408,8 +410,10 @@ string Parser::ParseSentence()
 		for(int start = 0; start <= (int)this->strVec_src_.size()-len; start++) 
 		{
 			Span sp(start, start+len);   //[start, start+len)
+			//PRINT("Span [ " << start << " " << start + len << "]\n"); 
 			vector<Cube*> v_cube;
-			if(len <=  DataSingleton::GetInstance()->p_parameter->GetRuleSpanLimit())   //cube
+			if((0 == start && len <=  DataSingleton::GetInstance()->p_parameter->GetRuleSpanLimit() + 1) ||   //head <s>
+				(0 != start && len <=  DataSingleton::GetInstance()->p_parameter->GetRuleSpanLimit()))   // cube   
 			{
 				ConstructCubeVecWithOneNonterminal(sp, v_cube);
 				if(3 <= len)
@@ -430,7 +434,7 @@ string Parser::ParseSentence()
 	Span sp(0, this->strVec_src_.size());
 	//PRINT("Parse over...\n");
 	//PRINT(this->p_chart_->GetCellSize(sp)<<endl);
-	return this->p_chart_->GetCell(sp)->GetHypo(0)->GetTrg();
+	return Util::CutHeadTailTag(this->p_chart_->GetCell(sp)->GetHypo(0)->GetTrg());
 }
 
 
