@@ -107,5 +107,22 @@ namespace Util
     		}
     		return str.substr(pos);
 	}
+	
+	inline std::string CutHeadTailTag(std::string str)
+	{
+		std::string str_head("<s>");
+		std::string str_tail("</s>");
+
+		size_t i_start = str.find_first_of(str_head) + str_head.size() + 1;
+		size_t i_end = str.find_last_of(str_tail) - str_tail.size();
+
+		std::string ret("");
+		if(i_end > i_start)
+		{
+			ret = str.substr(i_start, i_end - i_start);
+		}
+		return ret;
+	}
+
 }
 #endif
