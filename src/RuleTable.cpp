@@ -145,14 +145,42 @@ void RuleTable::Load(const string& file_name, const vector<double>& douVec_weigh
 	/* for glue rules 
  	 * glue rule ID is vec_rule_table_.size()-1.
  	 */
+	string str_src;
 	vector<string> strVec_glue_srcRhs;
 	vector<string> strVec_glue_trgRhs;
+	vector<Rule> vec_rule;
+
+	//glue rules for head and tail. we do this as moses
+	//for head <s>
+	strVec_glue_srcRhs.push_back("<s>"); strVec_glue_srcRhs.push_back(X1);
+	strVec_glue_trgRhs.push_back("<s>"); strVec_glue_trgRhs.push_back(X1);
+	vector<double> douVec_feats(douVec_weights.size(), 0);
+        Rule r1 = Rule(strVec_glue_srcRhs, strVec_glue_trgRhs, douVec_feats, douVec_weights);	
+	str_src = "<s> $X_1";
+	vec_rule.push_back(r1);
+	UpdateRuleTable(str_src, vec_rule);
+	//this->vec_rule_table_.push_back(r1);
+	strVec_glue_srcRhs.clear(); strVec_glue_trgRhs.clear(); vec_rule.clear();
+	cout << r1.SrcTrg2String() << endl;
+	
+
+	//for tail </s>
+	strVec_glue_srcRhs.push_back(X1); strVec_glue_srcRhs.push_back("</s>");
+        strVec_glue_trgRhs.push_back(X1); strVec_glue_trgRhs.push_back("</s>");
+        Rule r2 = Rule(strVec_glue_srcRhs, strVec_glue_trgRhs, douVec_feats, douVec_weights);	
+	str_src = "$X_1 </s>";	
+	vec_rule.push_back(r2);
+	UpdateRuleTable(str_src, vec_rule);
+	//this->vec_rule_table_.push_back(r2);
+	strVec_glue_srcRhs.clear(); strVec_glue_trgRhs.clear(); vec_rule.clear();
+	cout << r2.SrcTrg2String() << endl;
+
+
 	strVec_glue_srcRhs.push_back(X1); strVec_glue_srcRhs.push_back(X2);
 	strVec_glue_trgRhs.push_back(X1); strVec_glue_trgRhs.push_back(X2);
-	vector<double> douVec_feats(douVec_weights.size(), 0);
-	Rule r = Rule(strVec_glue_srcRhs, strVec_glue_trgRhs, douVec_feats, douVec_weights);
-	this->vec_rule_table_.push_back(r);
-	
+	Rule r3 = Rule(strVec_glue_srcRhs, strVec_glue_trgRhs, douVec_feats, douVec_weights);
+	this->vec_rule_table_.push_back(r3);
+	cout << r3.SrcTrg2String() << endl;
 
 	finish = clock(); 
 	double dou_duration = (finish - start)/CLOCKS_PER_SEC;
@@ -182,8 +210,9 @@ Rule  RuleTable::GenerateRule4OOV(const string& str, const int& i_feat_number)
 	vector<string> strVec_trgRhs(1, str);
 	
 	//PRINT("OOV feature number is " << i_feat_number << endl);
-	vector<double> douVec_feats(i_feat_number, -10);
-	vector<double> douVec_weights(i_feat_number, -10);
+	//we penalizie the oov rules with scores -4
+	vector<double> douVec_feats(i_feat_number, -1);
+	vector<double> douVec_weights(i_feat_number, 1);
 
 	Rule r = Rule(strVec_strRhs, strVec_trgRhs, douVec_feats, douVec_weights);
 	
