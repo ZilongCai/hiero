@@ -1,13 +1,12 @@
 # Executable
-EXE    = easy-hiero
+EXE    = 2lan-easy-hiero-multithread
 
 # Compiler, Linker Defines
-CC      = g++
+CC      = g++ -I ./include/
 PG      = #-pg
 CFLAGS = -g
 #CFLAGS  = -Wall -O2 -Wno-deprecated $(PG) -std=c++0x
-LIBS    = ./lib/libsrilm.a ./lib/lm.a ./lib/misc.a ./lib/dstruct.a
-#LIBS    = ./lib/lm.a ./lib/misc.a ./lib/dstruct.a
+LIBS = ./lib/liboolm.a ./lib/libdstruct.a ./lib/libmisc.a ./lib/liblattice.a ./lib/libflm.a -lpthread
 LDFLAGS = $(LIBS)
 
 # Compile and Assemble C++ Source Files into Object Files

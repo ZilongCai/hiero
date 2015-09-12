@@ -58,19 +58,39 @@ void Parameter::Load(const string& str_config_file)
 			this->str_rule_table_file_ = line;
 			PRINT("Rule table is [" << this->str_rule_table_file_ << "] "<<endl);
 		}
-		else if("[language-model-order]" == line)
+		else if("[large-language-model-order]" == line)
 		{
 			getline(fin, line);
                         line = Util::trim(line);
-			this->i_language_model_order_ = atoi(line.c_str());
+			this->i_large_language_model_order_ = atoi(line.c_str());
 		}
-		else if("[language-model-file]" == line)
+		else if("[large-language-model-file]" == line)
 		{
 			getline(fin, line);
                         line = Util::trim(line);
-			this->str_language_model_file_ = line;
-			PRINT("Language model is [" << this->str_language_model_file_ << "] "<<endl);
+			this->str_large_language_model_file_ = line;
+			PRINT("Large Language model is [" << this->str_large_language_model_file_ << "] "<<endl);
 		}
+		else if("[small-language-model-order]" == line)
+                {
+                        getline(fin, line);
+                        line = Util::trim(line);
+                        this->i_small_language_model_order_ = atoi(line.c_str());
+                }
+                else if("[small-language-model-file]" == line)
+                {
+                        getline(fin, line);
+                        line = Util::trim(line);
+                        this->str_small_language_model_file_ = line;
+                        PRINT("Small Language model is [" << this->str_small_language_model_file_ << "] "<<endl);
+                }
+		else if("[thread-num]" == line)
+                {
+                        getline(fin, line);
+                        line = Util::trim(line);
+                        this->i_thread_num_ = atoi(line.c_str());
+                        PRINT("Decoder will creat [" <<  this->i_thread_num_ << "] thread(s)..\n");
+                }		
 		else if("[rule-limit]" == line)
 		{
 			getline(fin, line);

@@ -9,7 +9,8 @@ DataSingleton::DataSingleton()
 DataSingleton::~DataSingleton()
 {
 	delete this->p_rule_table_;
-	delete this->p_language_model_;
+	delete this->p_large_language_model_;
+	delete this->p_small_language_model_;
 }
 
 
@@ -34,8 +35,14 @@ void DataSingleton::LoadModel()
 	this->p_rule_table_->Load(rule_table_filename, douVec_weights, i_rule_limit, dou_rule_threshold);
 	
 
-	string language_model_filename = this->p_parameter->GetLanguadeModelFile();
-	int i_language_model_order = this->p_parameter->GetLanguageModelOrder();
-	this->p_language_model_ = new LanguageModel(i_language_model_order, language_model_filename);
-	this->p_language_model_->Load();
+	string large_language_model_filename = this->p_parameter->GetLargeLanguadeModelFile();
+	int i_large_language_model_order = this->p_parameter->GetLargeLanguageModelOrder();
+	this->p_large_language_model_ = new LanguageModel(i_large_language_model_order, large_language_model_filename);
+	this->p_large_language_model_->Load();
+
+
+	string small_language_model_filename = this->p_parameter->GetSmallLanguadeModelFile();
+        int i_small_language_model_order = this->p_parameter->GetSmallLanguageModelOrder();
+        this->p_small_language_model_ = new LanguageModel(i_small_language_model_order, small_language_model_filename);
+        this->p_small_language_model_->Load();
 }

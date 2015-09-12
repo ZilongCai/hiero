@@ -51,11 +51,18 @@ public:
 	string GetRuleTableFile()
 		{return this->str_rule_table_file_;}
 
-	string GetLanguadeModelFile()
-		{return this->str_language_model_file_;}	
+	string GetLargeLanguadeModelFile()
+		{return this->str_large_language_model_file_;}	
+		
+	string GetSmallLanguadeModelFile()
+                {return this->str_small_language_model_file_;}
+	
+	
+	int GetLargeLanguageModelOrder()
+		{return this->i_large_language_model_order_;}
 
-	int GetLanguageModelOrder()
-		{return this->i_language_model_order_;}
+	int GetSmallLanguageModelOrder()
+                {return this->i_small_language_model_order_;}
 
 	string GetInputFile()
 		{return this->str_input_file_;}
@@ -65,6 +72,11 @@ public:
 
 	string GetNbestFile()
 		{return this->str_nbest_file_;}
+	
+	//thread num
+	int GetThreadNum()
+	         {return this->i_thread_num_;}	
+
 
 	
 private:
@@ -86,7 +98,12 @@ private:
 
 	int i_nbest_size_;
 	string str_rule_table_file_;	
-	string str_language_model_file_;
-	int i_language_model_order_;
+	string str_large_language_model_file_;
+	int i_large_language_model_order_;
+
+	string str_small_language_model_file_;
+        int i_small_language_model_order_;
+
+        int i_thread_num_;
 };
 #endif

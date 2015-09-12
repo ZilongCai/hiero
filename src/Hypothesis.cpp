@@ -24,7 +24,7 @@ Hypothesis::Hypothesis(const string& str_trg, vector<double>& douVec_feats, vect
 	string str_tmp;
 	vector<string> strVec = Util::split(str_trg);
 	
-	int i_bound_size = DataSingleton::GetInstance()->p_parameter->GetLanguageModelOrder();
+	int i_bound_size = DataSingleton::GetInstance()->p_parameter->GetLargeLanguageModelOrder();
 	for(size_t i = 0; i < strVec.size() && i < i_bound_size; i++)
 	{
 		str_tmp += strVec[i] + " ";

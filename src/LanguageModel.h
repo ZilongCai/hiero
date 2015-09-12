@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include"srilm.h"
+#include"Util.h"
 
 class LanguageModel
 {
@@ -21,7 +23,7 @@ public:
 	/**
 	* @brief: mainly invoke sriWordProb, paramters are for this function
 	*/
-	float GetProb(const std::string& word, const std::string& context)const;
+	float GetProb(const std::string& word, const std::string& context )const;
 	/**
 	* @brief: Get score for string str
 	* @param[in] str: The string which need score
@@ -33,11 +35,13 @@ public:
 	 * @return: The order 
 	 */	
 	size_t GetOrder() { return m_order; }
-
+	
 private:
-	void * m_lmPtr;
-	std::string m_lmFile;
+	Ngram* m_lmPtr;
+	Vocab* m_vbPtr;
+        std::string m_lmFile;
 	size_t m_order;
 	bool m_active;
+      
 };
 

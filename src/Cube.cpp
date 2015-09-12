@@ -7,6 +7,7 @@ Cube::~Cube()
 {
 	this->iVec_apply_ruleID_.clear();
 	this->vec_unvisited_point_.clear();
+	this->douVec_weights_.clear();
 }
 
 Cube::Cube(const vector<int>& iVec_apply_ruleid, const Span& sp1, const Span& sp2)
@@ -159,6 +160,7 @@ bool Cube::GetHypothesis(Chart const* p_chart, Hypothesis* ret_hypo)
 	//get trg string
 	string str_trg("");
 	vector<string> vecStr = r.GetTrgRhs();
+	//PRINT(r.SrcTrg2String() + "\n");
 	for(vector<string>::iterator ite = vecStr.begin(); ite != vecStr.end(); ite++)
 	{
 		if(X1 == *ite)
@@ -175,6 +177,7 @@ bool Cube::GetHypothesis(Chart const* p_chart, Hypothesis* ret_hypo)
 		}
 	}
 	str_trg = Util::trim(str_trg);
+	//PRINT(str_trg + "\n");
 		
 
 	//PRINT("Get feats...\n");
@@ -189,8 +192,13 @@ bool Cube::GetHypothesis(Chart const* p_chart, Hypothesis* ret_hypo)
 	}	
 
 	//PRINT("2......\n");
-	double dou_lm = DataSingleton::GetInstance()->p_language_model_->GetFullScore(str_trg);
-	douVec_feats.push_back(dou_lm); //lm feature
+	//double dou_lm = DataSingleton::GetInstance()->p_language_model_->GetFullScore(str_trg);
+	//douVec_feats.push_back(dou_lm); //lm feature
+	
+	double dou_lar_lm = DataSingleton::GetInstance()->p_large_language_model_->GetFullScore(str_trg);
+        double dou_sml_lm = DataSingleton::GetInstance()->p_small_language_model_->GetFullScore(str_trg);
+        douVec_feats.push_back(dou_lar_lm); //lm feature
+        douVec_feats.push_back(dou_sml_lm);
         
 	//PRINT("3......\n");
 	//rule count
@@ -210,13 +218,14 @@ bool Cube::GetHypothesis(Chart const* p_chart, Hypothesis* ret_hypo)
 	//PRINT("4......\n");
 	//glue rule count
 	if( DataSingleton::GetInstance()->p_rule_table_->GetRuleTableSize()-1 == this->iVec_apply_ruleID_[this->i_rule_visit_index_])
-        {
+	{
                 douVec_feats.push_back(1);
         }
         else
         {
                 douVec_feats.push_back(0);
         }
+
         for(size_t i = 0; i < v_hypo.size(); i++)
         {
                  douVec_feats[douVec_feats.size()-1] += v_hypo[i]->GetFeats()[douVec_feats.size()-1];

@@ -8,7 +8,7 @@ Rule::Rule(const string& ruleLine, const vector<double>& douVec_weights)
 	
 	vector<string> strVec = Util::split(ruleLine, str_delim);
 
-	if(5 > strVec.size())
+	if(4 > strVec.size())
 	{
 		
 			PRINT_ERR(" Rule [" + ruleLine + "] length is not enought \n Check eroor in Rule.cpp\n");

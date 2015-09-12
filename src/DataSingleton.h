@@ -37,7 +37,8 @@ public:
 	void LoadParameter(const string& str_config_file);
 
 	RuleTable *p_rule_table_;
-	LanguageModel *p_language_model_;
+	LanguageModel *p_large_language_model_;
+	LanguageModel *p_small_language_model_;
 	Parameter *p_parameter;
 
 private:

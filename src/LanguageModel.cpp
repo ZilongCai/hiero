@@ -3,7 +3,6 @@
 
 #include "LanguageModel.h"
 #include "Util.h"
-#include "lmsri.h"
 #include <stdlib.h>
 using namespace std;
 
@@ -20,31 +19,48 @@ LanguageModel::~LanguageModel(void)
 
 	if(m_active)
 	{
-        	exit(0);
-		sriUnloadLM(this->m_lmPtr);
+		PRINT("Exit SRI Language Model...");
+        	cerr<<"directly used exit()"<<endl;
+		exit(0);
+		delete this->m_vbPtr;
+		delete this->m_lmPtr;
+		PRINT("done. \n");
 	}
 
 }
 
 bool LanguageModel::Load()
 {
-	PRINT("Read LanguageModel from : \""<<m_lmFile<<"\" ...\n");
+	PRINT("Read LanguageModel from : \""<<m_lmFile<<"\" ...");
 	
 	clock_t start = clock();
-	this->m_lmPtr = sriLoadLM(m_lmFile.c_str(),1,m_order,1,0);
+	this->m_vbPtr = new Vocab();
+	this->m_vbPtr->unkIsWord() = true;
+	this->m_lmPtr = new Ngram(*m_vbPtr, this->m_order);
+
+    	File file(m_lmFile.c_str(), "r");
+    	if(file.error()) {
+        	fprintf(stderr,"Error:: Could not open file %s\n", m_lmFile.c_str());
+        	return 0;
+    	}
+    	else
+        this->m_lmPtr->read(file);
+
 	clock_t finish = clock();
 
 	if(m_lmPtr)
 	{
 		m_active = true;
-		PRINT("Load in "<< double(finish - start) / CLOCKS_PER_SEC <<" seconds\n");
+
+		PRINT("Load in "<< double(finish - start) / CLOCKS_PER_SEC
+				<<" seconds\n");
+	
 		return true;
 	}else{
-		PRINT_ERR("failed in loading language model \n");
+		PRINT("failed in loading language model \n");
 		return false;
 	}
 }
-	
 
 float LanguageModel::GetFullScore(const std::string &str)const
 {
@@ -57,7 +73,7 @@ float LanguageModel::GetFullScore(const std::string &str)const
 		spp2 = (int)str.find(' ', spp1);
 	wordPosVec.push_back(spp1);
 
-	while (spp2 != string::npos)
+	while ((size_t)spp2 != string::npos)
 	{
 		spp1 = spp2 + 1;
 		wordPosVec.push_back(spp1);
@@ -73,7 +89,7 @@ float LanguageModel::GetFullScore(const std::string &str)const
 
 		if (i > 1)
 		{
-			int start = (i < order) ? 0 : wordPosVec[i - order];
+			int start = (i < (int)order) ? 0 : wordPosVec[i - order];
 			context = str.substr(start, wordPosVec[i - 1] - 1 - start);
 		}
 
@@ -81,16 +97,26 @@ float LanguageModel::GetFullScore(const std::string &str)const
 
 		prob += p;
 
-	}
-
+	}	
 	return prob;
 }
 
 float LanguageModel::GetProb(const std::string &word, const std::string &context)const
 {
-	float ret = sriWordProb(this->m_lmPtr,word.c_str(),context.c_str())*LOG_E_10 ;
-    //return ret;
-	return ret>-100? ret:-100;
+	VocabString v_contexts[7];
+	VocabString v_word = word.c_str();
+
+	Vocab::parseWords((char *)context.c_str(), (VocabString *) v_contexts, 7);
+	Vocab::reverse(v_contexts);
+
+	LM* lmPtr = this->m_lmPtr;
+	LogP prob = lmPtr->wordProb(v_word, v_contexts) * LOG_E_10;
+
+	if(prob == LogP_Zero) {
+		prob = -100;
+	}
+
+	return prob>-100? prob:-100;
 }
 
 //TODO

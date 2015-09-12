@@ -48,6 +48,8 @@ public:
 		{return this->dou_score_ > r.dou_score_;}
 
 	string SrcTrg2String();
+	
+	string Print() const;
 
 private:
 	vector<string> strVec_srcRhs_;  

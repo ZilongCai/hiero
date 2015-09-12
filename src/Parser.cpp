@@ -68,9 +68,12 @@ Hypothesis* Parser::Rule2Hypo(Rule& r, const int& i_rule_ID)
 	str_trg = Util::trim(str_trg);
 
 	//PRINT("Add hypo [" << str_trg << "]\n");
-	double dou_lm = DataSingleton::GetInstance()->p_language_model_->GetFullScore(str_trg);
-	
-	douVec_feats.push_back(dou_lm); //lm feature
+	//double dou_lm = DataSingleton::GetInstance()->p_language_model_->GetFullScore(str_trg);
+	double dou_lar_lm = DataSingleton::GetInstance()->p_large_language_model_->GetFullScore(str_trg);
+        double dou_sml_lm = DataSingleton::GetInstance()->p_small_language_model_->GetFullScore(str_trg);	
+
+	douVec_feats.push_back(dou_lar_lm); //large lm feature
+        douVec_feats.push_back(dou_sml_lm); //small lm feature
 	douVec_feats.push_back(1);      //rule count
 	douVec_feats.push_back(0);      //glue rule count
 	douVec_feats.push_back((int)strVec_trg.size());
@@ -422,7 +425,7 @@ string Parser::ParseSentence()
 				}	
 			}
 		
-			if(0 == start)  //glue 
+			if(0 == start || this->strVec_src_.size() == start+len)  //glue 
 			{
 				Glue(sp, v_cube);		
 			}
